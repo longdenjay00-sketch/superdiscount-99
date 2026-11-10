@@ -1,7 +1,10 @@
 import React from 'react';
-import { Instagram, ArrowUp, Sparkles, Heart } from 'lucide-react';
+import { Instagram, ArrowUp, Sparkles, Shield, Lock } from 'lucide-react';
+import { useDeals } from '../context/DealsContext';
 
 export default function Footer() {
+  const { setIsAdminOpen, isAdminAuthenticated } = useDeals();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -32,13 +35,24 @@ export default function Footer() {
         <div class="flex items-center justify-between w-full pt-4 border-t border-slate-800/60 text-[11px]">
           <span>© {new Date().getFullYear()} SuperDiscount.99. All rights reserved.</span>
           
-          <button
-            onClick={scrollToTop}
-            class="flex items-center gap-1 text-slate-300 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700"
-          >
-            <span>Back to Top</span>
-            <ArrowUp size={12} />
-          </button>
+          <div class="flex items-center gap-3">
+            <button
+              onClick={() => setIsAdminOpen(true)}
+              class="flex items-center gap-1 text-slate-500 hover:text-pink-400 transition-colors text-[10px]"
+              title="Operator Studio"
+            >
+              <Lock size={11} />
+              <span>{isAdminAuthenticated ? 'Studio Active' : 'Admin'}</span>
+            </button>
+
+            <button
+              onClick={scrollToTop}
+              class="flex items-center gap-1 text-slate-300 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700"
+            >
+              <span>Back to Top</span>
+              <ArrowUp size={12} />
+            </button>
+          </div>
         </div>
 
       </div>

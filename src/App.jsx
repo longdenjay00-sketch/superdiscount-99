@@ -4,10 +4,11 @@ import Filters from './components/Filters';
 import DealGrid from './components/DealGrid';
 import DealModal from './components/DealModal';
 import Footer from './components/Footer';
-import initialDeals from './data/deals.json';
+import AdminModal from './components/Admin/AdminModal';
+import { DealsProvider, useDeals } from './context/DealsContext';
 
-export default function App() {
-  const [dealsList, setDealsList] = useState(initialDeals);
+function StorefrontContent() {
+  const { deals } = useDeals();
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,19 +18,18 @@ export default function App() {
 
   // Dynamic category calculations
   const categories = useMemo(() => {
-    const list = [
-      { name: 'All', count: dealsList.length },
-      { name: 'Under $1', count: dealsList.filter(d => d.salePrice <= 1.00).length },
-      { name: 'Tech', count: dealsList.filter(d => d.category === 'Tech').length },
-      { name: 'Home & Kitchen', count: dealsList.filter(d => d.category === 'Home & Kitchen').length },
-      { name: 'Lifestyle & Everyday', count: dealsList.filter(d => d.category === 'Lifestyle & Everyday').length },
+    return [
+      { name: 'All', count: deals.length },
+      { name: 'Under $1', count: deals.filter(d => d.salePrice <= 1.00).length },
+      { name: 'Tech', count: deals.filter(d => d.category === 'Tech').length },
+      { name: 'Home & Kitchen', count: deals.filter(d => d.category === 'Home & Kitchen').length },
+      { name: 'Lifestyle & Everyday', count: deals.filter(d => d.category === 'Lifestyle & Everyday').length },
     ];
-    return list;
-  }, [dealsList]);
+  }, [deals]);
 
   // Filtered and sorted deals
   const filteredDeals = useMemo(() => {
-    let result = [...dealsList];
+    let result = [...deals];
 
     // Filter by Category
     if (selectedCategory === 'Under $1') {
@@ -61,7 +61,7 @@ export default function App() {
     }
 
     return result;
-  }, [dealsList, selectedCategory, searchQuery, sortBy]);
+  }, [deals, selectedCategory, searchQuery, sortBy]);
 
   // Visible slices for "unlimited down" pagination
   const visibleDeals = useMemo(() => {
@@ -70,7 +70,6 @@ export default function App() {
 
   const hasMore = visibleLimit < filteredDeals.length;
 
-  // Simulate loading more items down the feed
   const handleLoadMore = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
@@ -87,14 +86,14 @@ export default function App() {
   };
 
   const dealsUnderOneDollarCount = useMemo(() => {
-    return dealsList.filter(d => d.salePrice <= 1.00).length;
-  }, [dealsList]);
+    return deals.filter(d => d.salePrice <= 1.00).length;
+  }, [deals]);
 
   return (
     <div class="min-h-screen bg-[#0B0F19] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Top Header */}
       <Header
-        dealsCount={dealsList.length}
+        dealsCount={deals.length}
         dealsUnderOneDollar={dealsUnderOneDollarCount}
       />
 
@@ -137,8 +136,19 @@ export default function App() {
         />
       )}
 
+      {/* Admin Studio Portal */}
+      <AdminModal />
+
       {/* Footer */}
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <DealsProvider>
+      <StorefrontContent />
+    </DealsProvider>
   );
 }

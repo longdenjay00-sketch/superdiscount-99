@@ -1,7 +1,10 @@
 import React from 'react';
-import { CheckCircle2, Flame, Bell, Share2, Instagram, Send, Sparkles } from 'lucide-react';
+import { CheckCircle2, Flame, Bell, Share2, Instagram, Send, Sparkles, Shield } from 'lucide-react';
+import { useDeals } from '../context/DealsContext';
 
 export default function Header({ dealsCount, dealsUnderOneDollar }) {
+  const { setIsAdminOpen, isAdminAuthenticated } = useDeals();
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -28,7 +31,7 @@ export default function Header({ dealsCount, dealsUnderOneDollar }) {
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
           
           {/* Instagram Story Avatar */}
-          <div class="relative group cursor-pointer">
+          <div class="relative group cursor-pointer" onClick={() => setIsAdminOpen(true)}>
             <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-[3px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 shadow-lg shadow-pink-500/20 group-hover:scale-105 transition-transform duration-300">
               <div class="w-full h-full rounded-full bg-[#0B0F19] p-1 flex items-center justify-center overflow-hidden">
                 <div class="w-full h-full rounded-full bg-gradient-to-br from-rose-500 to-indigo-700 flex flex-col items-center justify-center font-black text-white">
@@ -52,6 +55,15 @@ export default function Header({ dealsCount, dealsUnderOneDollar }) {
               <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/30">
                 Curated Bargains
               </span>
+              {isAdminAuthenticated && (
+                <button
+                  onClick={() => setIsAdminOpen(true)}
+                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1"
+                >
+                  <Shield size={10} />
+                  <span>Studio Active</span>
+                </button>
+              )}
             </div>
 
             <p class="text-slate-300 text-sm max-w-xl leading-relaxed mb-3">
